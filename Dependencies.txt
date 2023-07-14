@@ -1,4 +1,4 @@
-git+https://github.com/Pycord-Development/pycord
+py-cord
 opencv-python
 beautifulsoup4
 humanize
@@ -12,8 +12,6 @@ lxml
 certifi
 dill
 requests
-fastapi
+fastapi==0.90.1
 uvicorn[standard]
 html2image
-
-JAVASCRIPTLOCALTUNNEL: npm install -g localtunnel

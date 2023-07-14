@@ -1218,7 +1218,7 @@ class LoungeCommands:
     async def _mogi_update(client, message: discord.Message, this_bot: TableBot.ChannelBot, args: List[str], lounge_server_updates: Lounge.Lounge, is_primary=True):
         command_incorrect_format_message = "The format of this command is: `?" + args[0] + " TierNumber RacesPlayed (TableText)`\n- **TierNumber** must be a number. For RTs, between 1 and 8. For CTs, between 1 and 7. If you are trying to submit a squadqueue table, **TierNumber** should be: squadqueue\n-**RacesPlayed** must be a number, between 1 and 32."
         cooldown = lounge_server_updates.get_user_update_submit_cooldown(message.author.id)
-        updater_channel_id, preview_link, type_text = lounge_server_updates.get_information(is_primary)
+        updater_channel_id, _, preview_link, type_text = lounge_server_updates.get_information(is_primary)
 
         if cooldown > 0:
             await message.channel.send(f"You have already submitted a table very recently. Please wait {cooldown} more seconds before submitting another table.", delete_after=10)
@@ -1708,7 +1708,7 @@ class TablingCommands:
         rt_ct, tier = rt_ct or 'rt', tier or 1
         is_primary = rt_ct == 'rt'
 
-        updater_channel_id, preview_link, type_text = lounge_server_updates.get_information(is_primary)
+        updater_channel_id, _, preview_link, type_text = lounge_server_updates.get_information(is_primary)
         error_code, newTableText, json_data = await MogiUpdate.textInputUpdate(table_text, str(tier), this_bot.war.numberOfGPs*4, is_rt=is_primary)
 
         if error_code != MogiUpdate.SUCCESS_EC:
@@ -1718,12 +1718,12 @@ class TablingCommands:
 
         preview_link += urllib.parse.quote(json_data)
 
-        embedVar = discord.Embed(colour=discord.Color.blue())
+        embedVar = discord.Embed(title="", colour=discord.Color.blue(), description=f"[Preview Link]({preview_link})")
         embedVar.set_author(
             name='MMR/LR Prediction',
-            description=f"[Preview Link]({preview_link})",
             icon_url='https://www.mkwlounge.gg/images/logo.png'
         )
+
         await message.channel.send(embed=embedVar)
 
     @staticmethod
