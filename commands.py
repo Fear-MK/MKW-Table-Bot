@@ -2784,6 +2784,49 @@ class TablingCommands:
             await message.channel.send(f"Removed race #{removed_race[0]+1}: {removed_race[1]}")
 
     @staticmethod
+    async def remove_gp_command(message:discord.Message, this_bot:ChannelBot, args:List[str], server_prefix:str, is_lounge_server:bool):
+        ensure_table_loaded_check(this_bot, server_prefix, is_lounge_server)
+        
+        if len(args) == 1:
+            await message.channel.send("Here's how to do this command: " + server_prefix + "removegp <raceNumber>\nYou can see which GP to remove by looking at the table picture.")
+            return
+
+        if not args[1].isnumeric():
+            await message.channel.send("That's not a GP number!")
+            return
+
+        gpNum = int(args[1])
+        if gpNum < 1 or gpNum > this_bot.getRoom().getNumberOfGPS():
+            await message.channel.send(f"You aren't on GP{this_bot.getRoom().getNumberOfGPS()} yet!")
+            return
+
+        if this_bot.getRoom().getNumberOfGPS == 1:
+            await message.channel.send("You cannot remove every GP.")
+            return
+        
+        command, save_state = this_bot.get_save_state(message.content)
+
+        this_bot.getWar().clearEditsForGP(gpNum)
+
+        firstRaceNum = (gpNum-1)*4+1
+        if firstRaceNum+4 > len(this_bot.getRoom().races):
+            finalRaceNum = len(this_bot.getRoom().races)-firstRaceNum
+        else:
+            finalRaceNum = 4
+        
+        removed_races = []
+        for raceNum in range(firstRaceNum, finalRaceNum+1):
+            success, removed_race = this_bot.getRoom().remove_race(raceNum)
+            if not success:
+                await message.channel.send("Removing one of these races failed, so this command cannot be performed, please try again.")
+                return
+            removed_races.append(removed_race[1])
+        
+        removed_races_string = '\n\t'.join(removed_races)
+        await message.channel.send(f"Successfully removed GP{this_bot.getRoom().getNumberOfGPS}, the races removed were as follows{removed_races_string}")
+        
+        
+    @staticmethod
     async def gp_display_size_command(message:discord.Message, this_bot:ChannelBot, args:List[str], server_prefix:str, is_lounge_server:bool):
         ensure_table_loaded_check(this_bot, server_prefix, is_lounge_server)
 

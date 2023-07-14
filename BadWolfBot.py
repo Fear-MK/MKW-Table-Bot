@@ -67,6 +67,7 @@ LIST_REDOS_TERMS = {"redos", "getredos", "toredo"}
 
 #These commands also modify the table, but can be undone using the ?undo command
 REMOVE_RACE_TERMS = {"removerace"}
+REMOVE_GP_TERMS = {"removegp"}
 SUBSTITUTE_TERMS = {"sub", "substitute"}
 PLAYER_PENALTY_TERMS = {"pen", "penalty"}
 TEAM_PENALTY_TERMS = {"teampen", "teampenalty", "tagpen", "tagpenalty"}
@@ -771,7 +772,10 @@ class BadWolfBot(ext_commands.Bot):
                         
         elif main_command in REMOVE_RACE_TERMS:
             await commands.TablingCommands.remove_race_command(message, this_bot, args, server_prefix, is_lounge_server)
-        
+
+        elif main_command in REMOVE_GP_TERMS:
+            await commands.TablingCommands.remove_gp_command(message, this_bot, args, server_prefix, is_lounge_server)
+                
         elif main_command in SUBSTITUTE_TERMS:
             await commands.TablingCommands.substitute_player_command(message, this_bot, args, server_prefix, is_lounge_server)
         
@@ -1225,7 +1229,7 @@ def data_init():
 
 async def initialize():
     global bot
-    endpoints.initialize(app)
+    # endpoints.initialize(app)
     data_init()
     await DataTracker.initialize()
 

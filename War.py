@@ -94,6 +94,9 @@ class War(object):
         return self.numberOfTeams
     def isFFA(self):
         return self.playersPerTeam == 1
+    
+    def set_number_of_gps(self, newNum):
+        self.numberOfGPs=newNum
         
     def setTeams(self, teams):
         #teams is a dictionary of FCs, each FC having a tag
@@ -180,6 +183,11 @@ class War(object):
             if gpNum in edits:
                 gp_edits.append((FC, edits[gpNum]))
         return gp_edits
+    
+    def clearEditsForGP(self, gpNum):
+        for FC, edits in self.manualEdits.items():
+            if gpNum in edits:
+                del self.manualEdits[FC][gpNum]
     
     def getEditAmount(self, FC, gpNum):
         if FC not in self.manualEdits or gpNum not in self.manualEdits[FC]:
